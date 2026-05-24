@@ -1,7 +1,88 @@
-@import "tailwindcss";
-@config "../../tailwind.config.mts"
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
 
+/* ─── Fuentes ──────────────────────────────────────────────── */
 @theme {
-  --font-sans: var(--font-lato);
-  --font-display: var(--font-lexend);
+  /* Lexend para el cuerpo de texto (la fuente por defecto de la app) */
+  --font-sans: var(--font-lexend), 'Lexend', system-ui, sans-serif;
+
+  /* Lato para tus titulares y elementos destacados */
+  --font-heading: var(--font-lato), 'Lato', system-ui, sans-serif;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TEMA CLARO — LealCloud.dev
+══════════════════════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Fondos ─────────────────────────────────────────── */
+  --background: oklch(98.2% 0.002 60); /*HEX aproximado: #f9f9f8 */
+}
+/* ══════════════════════════════════════════════════════════════════════════════
+   TEMA OSCURO — LealCloud.dev 
+══════════════════════════════════════════════════════════════════════════════ */
+[data-theme='dark'] {
+  /* ── Fondos ─────────────────────────────────────────── */
+  --background: oklch(21.46% 0.043 247.93); /*HEX aproximado: #112233 */
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TOKENS TAILWIND — expone todas las variables al sistema de clases
+══════════════════════════════════════════════════════════════════════════════ */
+@theme inline {
+  /* Colores semánticos */
+  --color-background: var(--background);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   BASE — reglas globales de elementos
+══════════════════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  body {
+    @apply bg-background;
+    font-family: var(--font-sans);
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: unset;
+    font-size: unset;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   UTILIDADES GLOBALES
+══════════════════════════════════════════════════════════════════════════════ */
+@layer utilities {
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   FOUC Protection — Evita destellos y asegura fallback si falla JS
+────────────────────────────────────────────────────────────────────────────── */
+@keyframes fadeInFallback {
+  to {
+    opacity: 1;
+  }
+}
+
+html {
+  opacity: 0;
+  /* Si JS llega a fallar, la página se mostrará sola tras 250ms */
+  animation: fadeInFallback 0.1s forwards 0.25s;
+}
+
+/* Cuando el script inyecta el atributo con éxito, se muestra instantáneamente */
+html[data-theme='dark'],
+html[data-theme='light'] {
+  opacity: 1;
+  animation: none; /* Apaga el fallback si todo salió bien */
+  transition: opacity 0.15s ease-in;
 }

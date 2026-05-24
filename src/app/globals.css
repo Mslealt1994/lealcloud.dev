@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@config "../../tailwind.config.mts"
+
+@theme {
+  --font-sans: var(--font-lato);
+  --font-display: var(--font-lexend);
+}

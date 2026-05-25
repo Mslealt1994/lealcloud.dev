@@ -3,6 +3,8 @@ import { Lato, Lexend } from 'next/font/google';
 import { baseMetadata } from '@/config/seo';
 import './globals.css';
 
+import { Providers } from '@/providers';
+
 /**
  * @fileoverview Componente de Layout Raíz (RootLayout) del proyecto.
  * Define la estructura HTML base, la estrategia de carga de fuentes optimizadas,
@@ -47,9 +49,9 @@ export const metadata: Metadata = baseMetadata;
  * **Efectos Secundarios y Configuración de Plantilla:**
  * 1. **Inyección de Fuentes:** Agrega `--font-lato` y `--font-lexend` al árbol DOM mediante clases CSS variables.
  * Cualquier modificación o adición de fuentes requiere su correspondiente mapeo en `globals.css`.
- * 2. **Estado Temporal de Tema:** El atributo `data-theme="dark"` se encuentra hardcodeado de forma intencional
- * como estrategia de desarrollo mientras se implementa el Context/Provider definitivo de persistencia (Theme Provider).
- * Si usas esta plantilla, aquí es donde conectarás tu lógica de Light/Dark mode.
+ * 2. **Inyección de Proveedores Globales:** Envuelve los componentes hijos en `<Providers />`. Este componente
+ * actúa como el orquestador del estado global, manejando la persistencia y la inyección dinámica del atributo `data-theme`
+ * (Light/Dark mode) para mitigar el FOUC en conjunto con las reglas CSS base.
  */
 export default function RootLayout({
   children,
@@ -57,12 +59,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="es"
-      className={`${lato.variable} ${lexend.variable}`}
-      data-theme="dark"
-    >
-      <body>{children}</body>
+    <html lang="es" className={`${lato.variable} ${lexend.variable}`}>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

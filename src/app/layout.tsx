@@ -62,7 +62,7 @@ export default function RootLayout({
       className={`${lato.variable} ${lexend.variable}`}
       data-theme="dark"
     >
-      <body className="flex min-h-screen flex-col antialiased">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

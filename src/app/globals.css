@@ -1,53 +1,83 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
-@custom-variant dark (&:is([data-theme='dark'] *));
+/**
+ * @fileoverview Sistema central de estilos globales, tokens de diseño y optimización de renderizado.
+ * Implementa Tailwind CSS v4 con arquitectura nativa basada en CSS variables y el espacio de color OKLCH.
+ * @see https://oklch.com/ Herramienta de conversión y visualización del espacio perceptual OKLCH.
+ * @see https://color.adobe.com/es/create/color-contrast-analyzer Validación de contraste bajo estándares WCAG.
+ * @module Styles/Globals
+ */
 
-/* ─── Fuentes ──────────────────────────────────────────────── */
+/* ─── Fuentes y Tipografías ────────────────────────────────── */
 @theme {
-  /* Lexend para el cuerpo de texto (la fuente por defecto de la app) */
+  /** Asignación de la fuente Lexend para el cuerpo de texto principal (Legibilidad) */
   --font-sans: var(--font-lexend), 'Lexend', system-ui, sans-serif;
 
-  /* Lato para tus titulares y elementos destacados */
+  /** Asignación de la fuente Lato para titulares y elementos de alto impacto visual */
   --font-heading: var(--font-lato), 'Lato', system-ui, sans-serif;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   TEMA CLARO — LealCloud.dev
+   TEMA CLARO (Light Mode) — Tokens Semánticos Basados en OKLCH
 ══════════════════════════════════════════════════════════════════════════════ */
 :root {
-  /* ── Fondos ─────────────────────────────────────────── */
-  --background: oklch(98.2% 0.002 60); /*HEX aproximado: #f9f9f8 */
-}
-/* ══════════════════════════════════════════════════════════════════════════════
-   TEMA OSCURO — LealCloud.dev 
-══════════════════════════════════════════════════════════════════════════════ */
-[data-theme='dark'] {
-  /* ── Fondos ─────────────────────────────────────────── */
-  --background: oklch(21.46% 0.043 247.93); /*HEX aproximado: #112233 */
+  /* ── Fondos y Contenedores ── */
+  --background: oklch(0.9394 0.0309 289.79); /* HEX aprox: #eae8ff */
+  --foreground: oklch(0.2462 0.0398 249.73); /* HEX aprox: #112233 */
+
+  /* ── Identidad de Marca y Acentos ── */
+  --primary: oklch(0.4585 0.2562 272.59); /* HEX aprox: #372be2 */
+  --secondary: oklch(0.713 0.1288 276.71); /* HEX aprox: #8e9af2 */
+
+  --accent: oklch(0.643674 0.258873 4.3448); /* HEX aprox: #FF007A */
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   TOKENS TAILWIND — expone todas las variables al sistema de clases
+   TEMA OSCURO (Dark Mode) — Mapeo de Contraste Invertido
+══════════════════════════════════════════════════════════════════════════════ */
+[data-theme='dark'] {
+  /* ── Fondos ─────────────────────────────────────────── */
+  --background: oklch(0.2462 0.0398 249.73); /* HEX aprox: #112233 */
+  --foreground: oklch(0.9394 0.0309 289.79); /* HEX aprox: #eae8ff */
+
+  /* ── Identidad de Marca y Acentos ── */
+  --primary: oklch(0.5413 0.2466 293.01); /* HEX aprox: #7c3aed */
+  --secondary: oklch(0.6268 0.2325 303.9); /* HEX aprox: #a855f7 */
+
+  --accent: oklch(0.8188 0.1633 76.23); /* HEX aprox: #ffb326 */
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TOKENS TAILWIND — Exposición de variables nativas al motor de clases de Tailwind v4
 ══════════════════════════════════════════════════════════════════════════════ */
 @theme inline {
   /* Colores semánticos */
   --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+
+  --color-accent: var(--accent);
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   BASE — reglas globales de elementos
+   BASE — Reset Estricto de Elementos HTML Globales
 ══════════════════════════════════════════════════════════════════════════════ */
 
 @layer base {
   body {
-    @apply bg-background;
+    @apply bg-background text-foreground flex min-h-screen flex-col;
     font-family: var(--font-sans);
+    /* Transición suave para evitar parpadeos agresivos al alternar el tema */
     transition:
       background-color 0.3s ease,
       color 0.3s ease,
       border-color 0.3s ease;
   }
+
+  /** Reset tipográfico estructural para delegar el escalado al componente atómico */
   h1,
   h2,
   h3,
@@ -61,13 +91,16 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   UTILIDADES GLOBALES
+   UTILIDADES GLOBALES — Clases personalizadas de propósito único
 ══════════════════════════════════════════════════════════════════════════════ */
 @layer utilities {
+  /* Espacio reservado para utilidades complejas del proyecto (ej. patrones de fondo o gradientes) */
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────
-   FOUC Protection — Evita destellos y asegura fallback si falla JS
+   FOUC Protection (Flash of Unstyled Content)
+   Estrategia de mitigación contra destellos cromáticos intermitentes durante la 
+   hidratación del DOM y la evaluación del Theme Provider por parte de Javascript.
 ────────────────────────────────────────────────────────────────────────────── */
 @keyframes fadeInFallback {
   to {
@@ -75,16 +108,18 @@
   }
 }
 
+/** Estado inicial ciego: oculta el layout para evitar el renderizado sin tema evaluado */
 html {
   opacity: 0;
-  /* Si JS llega a fallar, la página se mostrará sola tras 250ms */
+  /* Mecanismo de contingencia: si el motor JS se bloquea o falla, la página se 
+     renderizará automáticamente tras 250ms garantizando accesibilidad y resiliencia. */
   animation: fadeInFallback 0.1s forwards 0.25s;
 }
 
-/* Cuando el script inyecta el atributo con éxito, se muestra instantáneamente */
+/** Estado listo: una vez que el script inyecta el tema, se rompe la restricción */
 html[data-theme='dark'],
 html[data-theme='light'] {
   opacity: 1;
-  animation: none; /* Apaga el fallback si todo salió bien */
+  animation: none;
   transition: opacity 0.15s ease-in;
 }

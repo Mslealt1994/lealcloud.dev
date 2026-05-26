@@ -4,6 +4,7 @@ import { baseMetadata } from '@/config/seo';
 import './globals.css';
 
 import { Providers } from '@/providers';
+import Header from '@/components/layout/Header/Header';
 
 /**
  * @fileoverview Componente de Layout Raíz (RootLayout) del proyecto.
@@ -61,7 +62,10 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${lato.variable} ${lexend.variable}`}>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header />
+          {children}
+        </Providers>
       </body>
     </html>
   );

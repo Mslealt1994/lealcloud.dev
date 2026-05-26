@@ -1,0 +1,91 @@
+/**
+ * @file lamp.css
+ * @description Variables de entorno cromático en espacio OKLCH, optimización cinemática 
+ * y transformaciones matriciales para el efecto óptico de lámpara del Header.
+ * @module Components/Layout/LampStyles
+ */
+
+:root {
+  /* ─── Variables de Capas Lumínicas: Espacio de Color Perceptual OKLCH (Matiz 272 - Violeta/Púrpura) ─── */
+  /** Halo base difuso de la lámpara: Alta luminosidad, saturación moderada, opacidad del 22%. */
+  --lamp-halo: oklch(0.8 0.16 272 / 0.22);
+  /** Núcleo volumétrico secundario: Incremento de saturación y opacidad al 32%. */
+  --lamp-core: oklch(0.75 0.2 272 / 0.32);
+  /** Haz de luz focal: Luminosidad máxima del 92%, opacidad concentrada al 60%. */
+  --lamp-beam: oklch(0.92 0.1 272 / 0.6);
+  /** Borde reflector microscópico: Alta reflectividad del 90%, opacidad estructural del 78%. */
+  --lamp-rim: oklch(0.9 0.12 272 / 0.78);
+  /** Sombra proyectada por la difracción lumínica trasera. */
+  --lamp-shadow: oklch(0.55 0.22 272 / 0.28);
+
+  /* ─── Variables de la Pista del Contenedor (Tokens por Defecto - Light Theme) ─── */
+  --nav-bg: oklch(0.92 0.015 60 / 0.75);
+  --nav-border: oklch(0.55 0.18 272 / 0.3);
+}
+
+[data-theme='dark'] {
+  /* En el modo oscuro se preserva la física de la luz inmutable para simular emisión orgánica */
+  --lamp-halo: oklch(0.8 0.16 272 / 0.22);
+  --lamp-core: oklch(0.75 0.2 272 / 0.32);
+  --lamp-beam: oklch(0.92 0.1 272 / 0.6);
+  --lamp-rim: oklch(0.9 0.12 272 / 0.78);
+  --lamp-shadow: oklch(0.55 0.22 272 / 0.28);
+
+  /* Muta el fondo del contenedor hacia una tonalidad abisal ultra-oscura con tinte violeta */
+  --nav-bg: oklch(0.12 0.02 272 / 0.68);
+  --nav-border: oklch(0.55 0.18 272 / 0.3);
+}
+
+/* ══════════════════════════════════════════════════════
+   KEYFRAMES (Cálculos de Transformación y Opacidad)
+══════════════════════════════════════════════════════ */
+
+/**
+ * Animación de entrada por orquestación del Header (Montaje).
+ * Ejecuta una interpolación combinada de escala y traslación vertical suavizada.
+ */
+@keyframes navIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/**
+ * Cinemática de pulso orgánico continuo para las capas volumétricas de la lámpara.
+ * Modula la opacidad y expande el plano bidimensional de los elipses de forma proporcional.
+ * * @remarks
+ * Preserva estrictamente la traslación horizontal de centrado `translateX(-50%)` en cada frame 
+ * para anular conflictos con los estilos inline del componente.
+ */
+@keyframes lampPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scaleX(1) scaleY(1);
+  }
+  50% {
+    opacity: 0.78;
+    transform: translateX(-50%) scaleX(1.08) scaleY(1.12);
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   REGLAS DE POSICIONAMIENTO Y VECTORES
+══════════════════════════════════════════════════════ */
+
+/**
+ * Clase estructural para cada capa emisora de luz.
+ * Fuerza el anclaje horizontal central absoluto y define la raíz cinemática en el eje superior.
+ */
+.lamp-layer {
+  position: absolute;
+  left: 50%;
+  /** Define el pivote de transformación en el centro horizontal superior, logrando que 
+      el escalado se proyecte hacia abajo asemejando la caída natural de la gravedad de la luz. */
+  transform-origin: 50% 0%;
+}

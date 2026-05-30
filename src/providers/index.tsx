@@ -20,6 +20,8 @@ import { ThemeProvider } from './Theme';
  * Al centralizar aquí el `ThemeProvider` (y futuros contextos), evitamos colocar la directiva `'use client'`
  * en el `layout.tsx` raíz, permitiendo que el layout base se siga renderizando e indexando en el servidor (SSR).
  */
+
+// TODO: CORREGIR DESINCRONIZACIÓN DE TEMA EN NAVEGACIÓN HISTÓRICA (BFCache / Back-Forward)
 export const Providers: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
